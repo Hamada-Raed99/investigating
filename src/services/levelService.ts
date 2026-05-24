@@ -2,7 +2,7 @@
  * Fetches level content from Supabase and verifies accusations via RPC.
  */
 
-import { supabase } from '@/lib/supabase';
+import { getSupabase, isSupabaseConfigured } from '@/lib/supabase';
 import type {
   AccusationSubmission,
   LevelAccusationConfig,
@@ -132,14 +132,11 @@ Toxicology: No sedatives detected. Blood alcohol 0.04%.`,
 };
 
 export async function fetchLevelData(levelNumber: number): Promise<LevelData> {
-  const isConfigured =
-    import.meta.env.VITE_SUPABASE_URL &&
-    import.meta.env.VITE_SUPABASE_ANON_KEY &&
-    !import.meta.env.VITE_SUPABASE_URL.includes('your-project');
-
-  if (!isConfigured) {
+  if (!isSupabaseConfigured()) {
     return DEMO_LEVEL_DATA;
   }
+
+  const supabase = getSupabase();
 
   const { data: level, error: levelError } = await supabase
     .from('levels')
@@ -189,12 +186,7 @@ export async function verifyAccusation(
   levelId: string,
   submission: AccusationSubmission,
 ): Promise<VerificationResult> {
-  const isConfigured =
-    import.meta.env.VITE_SUPABASE_URL &&
-    import.meta.env.VITE_SUPABASE_ANON_KEY &&
-    !import.meta.env.VITE_SUPABASE_URL.includes('your-project');
-
-  if (!isConfigured) {
+  if (!isSupabaseConfigured()) {
     const isCorrect =
       submission.suspectId === 'demo-suspect-marcus' &&
       submission.motiveKey === 'false_alibi' &&
@@ -207,6 +199,8 @@ export async function verifyAccusation(
         : 'The evidence does not support this accusation. Re-examine the case files.',
     };
   }
+
+  const supabase = getSupabase();
 
   const { data, error } = await supabase.rpc('verify_accusation', {
     p_level_id: levelId,
