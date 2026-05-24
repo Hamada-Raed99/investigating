@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/accusationpanel.tsx","./src/components/evidenceviewer.tsx","./src/components/gamedashboard.tsx","./src/components/notebook.tsx","./src/lib/notebookstorage.ts","./src/lib/supabase.ts","./src/services/levelservice.ts","./src/types/game.ts"],"version":"5.9.3"}
